@@ -3,3 +3,4 @@ onnxruntime
 flask
 opencv-python
 numpy
+streamlit
