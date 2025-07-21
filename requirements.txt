@@ -1,6 +1,7 @@
-insightface
-onnxruntime
-flask
-pillow
-numpy
-streamlit
+ streamlit
+ pillow
+ insightface
+ numpy
+-faiss-cpu       # if you already have this, move it up
++faiss-cpu       # ← this provides the `faiss` module on CPU-only installs
+ gunicorn
