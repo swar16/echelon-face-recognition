@@ -7,13 +7,14 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 
-from face_utils import (
+# <-- changed imports to include the `app.` prefix
+from app.face_utils import (
     extract_embedding,
     validate_and_extract,
     save_embedding,
     load_embeddings,
 )
-from faiss_utils import load_faiss_index
+from app.faiss_utils import load_faiss_index
 
 # match threshold: 1 - distance (tweak to your accuracy/speed needs)
 MATCH_THRESHOLD = 0.5
