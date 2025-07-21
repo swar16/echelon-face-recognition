@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enroll Face</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 420px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .image-slot {
+      margin: 10px 0;
+    }
+    .image-slot label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .image-slot input[type="file"] {
+      width: 100%;
+    }
+    .preview {
+      display: block;
+      margin-top: 5px;
+      max-width: 100%;
+      max-height: 120px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      width: 100%;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Enroll New Face</h2>
+    <form method="post" enctype="multipart/form-data">
+      <input type="text" name="name" placeholder="Enter person’s name" required>
+
+      <div class="image-slot">
+        <label for="front_image">Front-facing Photo</label>
+        <input type="file" id="front_image" name="front_image" accept="image/*" required>
+        <img id="front_preview" class="preview" style="display:none;">
+      </div>
+
+      <div class="image-slot">
+        <label for="right_image">Right-profile Photo</label>
+        <input type="file" id="right_image" name="right_image" accept="image/*" required>
+        <img id="right_preview" class="preview" style="display:none;">
+      </div>
+
+      <div class="image-slot">
+        <label for="left_image">Left-profile Photo</label>
+        <input type="file" id="left_image" name="left_image" accept="image/*" required>
+        <img id="left_preview" class="preview" style="display:none;">
+      </div>
+
+      <button type="submit">Enroll</button>
+    </form>
+
+    {% if message %}
+      <div class="message">{{ message }}</div>
+    {% endif %}
+  </div>
+
+  <script>
+    function previewImage(input, previewId) {
+      const preview = document.getElementById(previewId);
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
+    document.getElementById('front_image')
+      .addEventListener('change', () => previewImage(event.target, 'front_preview'));
+    document.getElementById('right_image')
+      .addEventListener('change', () => previewImage(event.target, 'right_preview'));
+    document.getElementById('left_image')
+      .addEventListener('change', () => previewImage(event.target, 'left_preview'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+*.egg-info/
+
+# SQLite & FAISS artifacts
+app/database.db
+app/face_index.faiss
+
+# Enrolled images & temp folders
+app/enrolled_images/
+app/temp/
+
+# Logs, OS files
+*.log
+.DS_Store
