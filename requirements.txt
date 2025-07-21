@@ -1,6 +1,6 @@
 insightface
 onnxruntime
 flask
-opencv-python
+pillow
 numpy
 streamlit
