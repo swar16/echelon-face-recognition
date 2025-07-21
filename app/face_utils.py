@@ -1,8 +1,10 @@
+# app/face_utils.py
+
 import insightface
 import numpy as np
 import sqlite3
 import os
-from faiss_utils import create_faiss_index, save_faiss_index
+from app.faiss_utils import create_faiss_index, save_faiss_index
 
 # Paths
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
@@ -38,7 +40,6 @@ def extract_embedding(image_bgr):
     faces = MODEL.get(image_bgr)
     if not faces:
         return None
-    # pick highest-confidence face
     faces.sort(key=lambda f: f.det_score, reverse=True)
     emb = faces[0].embedding
     emb = emb / np.linalg.norm(emb)
@@ -56,12 +57,11 @@ def _validate_pose(image_bgr, expected_pose):
         return False
     faces.sort(key=lambda f: f.det_score, reverse=True)
     face = faces[0]
-    x1, y1, x2, y2 = face.bbox.astype(float)
+    x1, _, x2, _ = face.bbox.astype(float)
     mid_x = (x1 + x2) / 2
     nose_x = face.kps[2][0]  # landmark #2 is nose tip
-
     width = x2 - x1
-    offset = width * 0.1  # tolerance zone
+    offset = width * 0.1
 
     if expected_pose == 'front':
         return abs(nose_x - mid_x) < offset
@@ -95,7 +95,6 @@ def save_embedding(name, embedding_list):
         )
     conn.commit()
     conn.close()
-    # rebuild FAISS
     rebuild_faiss_index()
 
 def load_embeddings():
@@ -117,6 +116,7 @@ def load_embeddings():
     return names, np.stack(embs, axis=0) if embs else (names, np.zeros((0, 512), dtype=np.float32))
 
 def rebuild_faiss_index():
+    """Rebuild and persist the FAISS index from all stored embeddings."""
     names, embs = load_embeddings()
     if embs.shape[0] == 0:
         return

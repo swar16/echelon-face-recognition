@@ -1,19 +1,21 @@
+# app/enroll_web.py
+
 import os
 import shutil
 import tempfile
 
 import cv2
 from flask import Flask, request, render_template
-from werkzeug.utils import secure_filename    # ← NEW import
+from werkzeug.utils import secure_filename
 
-from face_utils import init_db, save_embedding, validate_and_extract
+from app.face_utils import init_db, save_embedding, validate_and_extract
 
 app = Flask(__name__)
-BASE_DIR       = os.path.dirname(__file__)
-ENROLLED_DIR   = os.path.join(BASE_DIR, "enrolled_images")
-TEMP_PARENT    = os.path.join(BASE_DIR, "temp")
+BASE_DIR     = os.path.dirname(__file__)
+ENROLLED_DIR = os.path.join(BASE_DIR, "enrolled_images")
+TEMP_PARENT  = os.path.join(BASE_DIR, "temp")
 
-# ensure directories exist
+# Ensure directories exist
 os.makedirs(ENROLLED_DIR, exist_ok=True)
 os.makedirs(TEMP_PARENT, exist_ok=True)
 
@@ -26,10 +28,8 @@ def upload():
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         if not name:
-            message = "Name is required."
-            return render_template("upload.html", message=message)
+            return render_template("upload.html", message="Name is required.")
 
-        # gather files
         slots = {
             'front': request.files.get("front_image"),
             'right': request.files.get("right_image"),
@@ -37,8 +37,7 @@ def upload():
         }
 
         temp_dir = tempfile.mkdtemp(dir=TEMP_PARENT)
-        embeddings = []
-        invalid = []
+        embeddings, invalid = [], []
 
         try:
             for pose, file in slots.items():
@@ -46,10 +45,8 @@ def upload():
                     invalid.append(f"{pose} image missing")
                     continue
 
-                # SECURE and prefix the filename
-                clean_name = secure_filename(file.filename)
-                filename = f"{pose}_{clean_name}"
-                path = os.path.join(temp_dir, filename)
+                filename = secure_filename(file.filename)
+                path = os.path.join(temp_dir, f"{pose}_{filename}")
                 file.save(path)
 
                 img = cv2.imread(path)
@@ -75,7 +72,6 @@ def upload():
                 message = f"✅ {name} enrolled with 3 valid images."
             else:
                 message = "❌ Enrollment failed:\n" + "\n".join(invalid)
-
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 
